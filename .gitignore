@@ -1,0 +1,8 @@
+*
+!data_structures/
+!data_structures/**
+!CMakeLists.txt
+!README.md
+!LICENSE
+!.gitattributes
+!.gitignore
