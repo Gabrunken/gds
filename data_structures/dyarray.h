@@ -100,12 +100,12 @@ bool DYArrayAddElement(dyarray* arr, void* element)
 
 bool DYArrayRemoveElementSP(dyarray *arr, size_t idx)
 {
-    if (!arr) {printf("DYArrayAddElement ERROR: arr is NULL.\n"); return false;}
-    if (!arr->buf) {printf("DYArrayAddElement ERROR: arr.buf is NULL.\n"); return false;}
-    if (arr->elementSize == 0) {printf("DYArrayAddElement ERROR: arr.elementSize is 0.\n"); return false;}
+    if (!arr) {printf("DYArrayRemoveElementSP ERROR: arr is NULL.\n"); return false;}
+    if (!arr->buf) {printf("DYArrayRemoveElementSP ERROR: arr.buf is NULL.\n"); return false;}
+    if (arr->elementSize == 0) {printf("DYArrayRemoveElementSP ERROR: arr.elementSize is 0.\n"); return false;}
 
     //Check if idx is out of bounds
-    if (idx >= arr->elementCount) {printf("DYArrayAddElement ERROR: index is out of bounds\n"); return false;}
+    if (idx >= arr->elementCount) {printf("DYArrayRemoveElementSP ERROR: index is out of bounds\n"); return false;}
 
     memcpy(
         ((char*)arr->buf) + idx * arr->elementSize,
@@ -122,7 +122,7 @@ void* DYArrayGetElement(dyarray* arr, size_t idx)
     if (!arr->buf) {printf("DYArrayGetElement ERROR: arr.buf is NULL.\n"); return NULL;}
     if (arr->elementSize == 0) {printf("DYArrayGetElement ERROR: arr.elementSize is 0.\n"); return NULL;}
 
-    if (idx >= arr->elementCount) {printf("DYArrayAddElement ERROR: index is out of bounds\n"); return NULL;}
+    if (idx >= arr->elementCount) {printf("DYArrayGetElement ERROR: index is out of bounds\n"); return NULL;}
 
     return ((char*)arr->buf) + idx * arr->elementSize;
 }
