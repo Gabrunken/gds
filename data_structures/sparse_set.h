@@ -31,6 +31,8 @@ size_t SparseSetGetPhysicalIndexFromID(struct SparseSet* set, size_t id);
 size_t SparseSetGetIDFromPhysicalIndex(struct SparseSet* set, size_t physicalIdx);
 void* SparseSetGetDataBuffer(struct SparseSet* set);
 
+bool SparseSetClone(struct SparseSet* original, struct SparseSet* new);
+
 #ifdef SPARSE_SET_IMPL
 
 #include <string.h>
@@ -226,6 +228,32 @@ void* SparseSetGetDataBuffer(struct SparseSet* set)
 {
     EXPECT(set, "SparseSetGetDataBuffer: set is NULL");
     return set->data;
+}
+
+bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
+{
+    EXPECT(original, "SparseSetClone: original is NULL");
+    EXPECT(new, "SparseSetClone: new is NULL");
+
+    new->data = calloc(1, original.dataArrLen);
+    EXPECT(new->data, "SparseSetClone: calloc failed");
+    memcpy(new->data, original->data, original->dataArrLen);
+
+    new->valueSize = original->valueSize;
+    new->dataLen = original->dataLen;
+    new->dataArrLen = original->dataArrLen;
+
+    new->logicalToPhysical = calloc(1, original->logicalToPhysicalArrLen);
+    EXPECT(new->logicalToPhysical, "SparseSetClone: calloc failed");
+    memcpy(new->logicalToPhysical, original->logicalToPhysical, original->logicalToPhysicalArrLen);
+
+    new->logicalToPhysicalArrLen = original->logicalToPhysicalArrLen;
+
+    new->physicalToLogical = calloc(1, (original->dataArrLen / original->valueSize) * sizeof(size_t));
+    EXPECT(new->physicalToLogical, "SparseSetClone: calloc failed");
+    memcpy(new->physicalToLogical, original->physicalToLogical, (original->dataArrLen / original->valueSize) * sizeof(size_t));
+
+    return true;
 }
 
 #endif //SPARSE_SET_IMPL
