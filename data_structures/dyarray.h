@@ -24,6 +24,9 @@ bool DYArrayAddElement(dyarray* arr, void* element);
 //Returns NULL on failure (example: the index is out of bounds).
 void* DYArrayGetElement(dyarray* arr, size_t idx);
 
+//Change an existing element's value with a new value.
+bool DyArraySetElement(dyarray* arr, size_t idx, void* newVal);
+
 //Removes an element by swapping it with the last one, and then removing the last element,
 //to achieve constant time complexity for the operation.
 //This means that the array will NOT be ordered after.
@@ -125,6 +128,18 @@ void* DYArrayGetElement(dyarray* arr, size_t idx)
     if (idx >= arr->elementCount) {printf("DYArrayGetElement ERROR: index is out of bounds\n"); return NULL;}
 
     return ((char*)arr->buf) + idx * arr->elementSize;
+}
+
+bool DyArraySetElement(dyarray* arr, size_t idx, void* newVal)
+{
+    if (!arr) {printf("DyArraySetElement ERROR: arr is NULL.\n"); return false;}
+    if (!arr->buf) {printf("DyArraySetElement ERROR: arr.buf is NULL.\n"); return false;}
+    if (arr->elementSize == 0) {printf("DyArraySetElement ERROR: arr.elementSize is 0.\n"); return false;}
+
+    if (idx >= arr->elementCount) {printf("DyArraySetElement ERROR: index is out of bounds\n"); return false;}
+
+    memcpy(((char*)arr->buf) + idx * arr->elementSize, newVal, arr->elementSize);
+    return true;
 }
 
 #endif //Impl
