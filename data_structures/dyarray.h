@@ -151,8 +151,6 @@ bool DyArrayClone(dyarray* original, dyarray* new)
     if (original->elementSize == 0) {printf("DyArrayClone ERROR: original.elementSize is 0.\n"); return false;}
     if (original->bufCapacity == 0) {printf("DyArrayClone ERROR: original.bufCapacity is 0.\n"); return false;}
 
-    if (idx >= original->elementCount) {printf("DyArrayClone ERROR: index is out of bounds\n"); return false;}
-
     if (!new) {printf("DyArrayClone ERROR: new is NULL.\n"); return false;}
 
     new->buf = malloc(original->bufCapacity);
