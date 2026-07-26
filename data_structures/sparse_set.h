@@ -235,7 +235,7 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
     EXPECT(original, "SparseSetClone: original is NULL");
     EXPECT(new, "SparseSetClone: new is NULL");
 
-    new->data = calloc(1, original.dataArrLen);
+    new->data = calloc(1, original->dataArrLen);
     EXPECT(new->data, "SparseSetClone: calloc failed");
     memcpy(new->data, original->data, original->dataArrLen);
 
