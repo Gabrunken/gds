@@ -240,7 +240,7 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
         return false;
     }
 
-    if (original->dataArrLen == 0 || original->logicalToPhysicalArrLen) {
+    if (original->dataArrLen == 0 || original->logicalToPhysicalArrLen == 0) {
         printf("SparseSetClone ERROR: original buffer is empty.\n");
         return false;
     }
