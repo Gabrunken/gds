@@ -305,22 +305,22 @@ void SparseSetSerialize(struct SparseSet* set, FILE* file)
 
     struct SparseSet
     {
-        void* data;
         size_t valueSize;
         size_t dataLen;
         size_t dataArrLen;
-        size_t* logicalToPhysical;
         size_t logicalToPhysicalArrLen;
+        size_t* logicalToPhysical;
         size_t* physicalToLogical;
+        void* data;
     };
 
-    fwrite(set->data, 1, set->dataArrLen, file);
     fwrite(&set->valueSize, 1, sizeof(size_t), file);
     fwrite(&set->dataLen, 1, sizeof(size_t), file);
     fwrite(&set->dataArrLen, 1, sizeof(size_t), file);
-    fwrite(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
     fwrite(&set->logicalToPhysicalArrLen, 1, sizeof(size_t), file);
+    fwrite(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
     fwrite(set->physicalToLogical, 1, (set->dataArrLen / set->valueSize) * sizeof(size_t), file);
+    fwrite(set->data, 1, set->dataArrLen, file);
 }
 
 #endif //SPARSE_SET_IMPL

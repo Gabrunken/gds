@@ -192,16 +192,16 @@ void DyArraySerialize(dyarray* arr, FILE* file)
 
     typedef struct
     {
-        void* buf;
         size_t bufCapacity; //Allocated memory for buf
         size_t elementSize; //Size in bytes of each element
         size_t elementCount; //Number of stored elements
+        void* buf;
     } dyarray;
 
-    fwrite(arr->buf, 1, arr->bufCapacity, file);
     fwrite(&arr->bufCapacity, 1, sizeof(size_t), file);
     fwrite(&arr->elementSize, 1, sizeof(size_t), file);
     fwrite(&arr->elementCount, 1, sizeof(size_t), file);
+    fwrite(arr->buf, 1, arr->bufCapacity, file);
 }
 
 #endif //Impl
