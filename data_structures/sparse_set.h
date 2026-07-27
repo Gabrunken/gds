@@ -235,7 +235,7 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
     EXPECT(original, "SparseSetClone: original is NULL");
     EXPECT(new, "SparseSetClone: new is NULL");
 
-    new->data = calloc(1, original->dataArrLen);
+    new->data = malloc(original->dataArrLen);
     EXPECT(new->data, "SparseSetClone: calloc failed");
     memcpy(new->data, original->data, original->dataArrLen);
 
@@ -243,13 +243,13 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
     new->dataLen = original->dataLen;
     new->dataArrLen = original->dataArrLen;
 
-    new->logicalToPhysical = calloc(1, original->logicalToPhysicalArrLen);
+    new->logicalToPhysical = malloc(original->logicalToPhysicalArrLen);
     EXPECT(new->logicalToPhysical, "SparseSetClone: calloc failed");
     memcpy(new->logicalToPhysical, original->logicalToPhysical, original->logicalToPhysicalArrLen);
 
     new->logicalToPhysicalArrLen = original->logicalToPhysicalArrLen;
 
-    new->physicalToLogical = calloc(1, (original->dataArrLen / original->valueSize) * sizeof(size_t));
+    new->physicalToLogical = malloc((original->dataArrLen / original->valueSize) * sizeof(size_t));
     EXPECT(new->physicalToLogical, "SparseSetClone: calloc failed");
     memcpy(new->physicalToLogical, original->physicalToLogical, (original->dataArrLen / original->valueSize) * sizeof(size_t));
 
