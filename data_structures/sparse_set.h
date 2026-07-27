@@ -15,6 +15,8 @@ struct SparseSet
     size_t* physicalToLogical;
 };
 
+typedef int FILE;
+
 //Data must be an element of size "valueSize"
 void SparseSetAddElement(struct SparseSet* set, size_t id, void* data);
 void SparseSetRemoveElement(struct SparseSet* set, size_t id);
@@ -32,6 +34,9 @@ size_t SparseSetGetIDFromPhysicalIndex(struct SparseSet* set, size_t physicalIdx
 void* SparseSetGetDataBuffer(struct SparseSet* set);
 
 bool SparseSetClone(struct SparseSet* original, struct SparseSet* new);
+
+//Serializes the passed sparseset in the specified file stream, by appending the data at the current cursor position.
+void SparseSetSerialize(struct SparseSet* set, FILE* file);
 
 #ifdef SPARSE_SET_IMPL
 
@@ -269,6 +274,53 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
     memcpy(new->physicalToLogical, original->physicalToLogical, (original->dataArrLen / original->valueSize) * sizeof(size_t));
 
     return true;
+}
+
+void SparseSetSerialize(struct SparseSet* set, FILE* file)
+{
+    if (!set) {
+        printf("SparseSetSerialize ERROR: set is NULL.\n");
+        return;
+    }
+
+    if (!file) {
+        printf("SparseSetSerialize ERROR: file is NULL.\n");
+        return;
+    }
+
+    if (!set->data) {
+        printf("SparseSetSerialize ERROR: set.data is NULL.\n");
+        return;
+    }
+
+    if (!set->logicalToPhysical) {
+        printf("SparseSetSerialize ERROR: set.logicalToPhysical is NULL.\n");
+        return;
+    }
+
+    if (!set->physicalToLogical) {
+        printf("SparseSetSerialize ERROR: set.physicalToLogical is NULL.\n");
+        return;
+    }
+
+    struct SparseSet
+    {
+        void* data;
+        size_t valueSize;
+        size_t dataLen;
+        size_t dataArrLen;
+        size_t* logicalToPhysical;
+        size_t logicalToPhysicalArrLen;
+        size_t* physicalToLogical;
+    };
+
+    fwrite(set->data, 1, set->dataArrLen, file);
+    fwrite(&set->valueSize, 1, sizeof(size_t), file);
+    fwrite(&set->dataLen, 1, sizeof(size_t), file);
+    fwrite(&set->dataArrLen, 1, sizeof(size_t), file);
+    fwrite(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
+    fwrite(&set->logicalToPhysicalArrLen, 1, sizeof(size_t), file);
+    fwrite(set->physicalToLogical, 1, (set->dataArrLen / set->valueSize) * sizeof(size_t), file);
 }
 
 #endif //SPARSE_SET_IMPL

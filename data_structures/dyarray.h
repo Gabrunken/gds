@@ -11,6 +11,8 @@ typedef struct
     size_t elementCount; //Number of stored elements
 } dyarray;
 
+typedef int FILE;
+
 //Element size is the size in bytes of each element stored in the array (must be at least 1).
 //Initial element capacity indicates the initial per-element capacity allocated for the array (must be at least 1).
 //Returns false on failure.
@@ -34,6 +36,9 @@ bool DyArraySetElement(dyarray* arr, size_t idx, void* newVal);
 bool DyArrayRemoveElementSP(dyarray* arr, size_t idx);
 
 bool DyArrayClone(dyarray* original, dyarray* new);
+
+//Serializes the passed dyarray in the specified file stream, by appending the data at the current cursor position.
+void DyArraySerialize(dyarray* arr, FILE* file);
 
 #ifdef DYARRAY_IMPL
 
@@ -162,6 +167,41 @@ bool DyArrayClone(dyarray* original, dyarray* new)
     new->bufCapacity = original->bufCapacity;
 
     return true;
+}
+
+void DyArraySerialize(dyarray* arr, FILE* file)
+{
+    if (!arr) {
+        printf("DyArraySerialize ERROR: arr is NULL.\n");
+        return;
+    }
+
+    if (!file) {
+        printf("DyArraySerialize ERROR: file is NULL.\n");
+        return;
+    }
+
+    if (!arr->buf) {
+        printf("DyArraySerialize ERROR: arr.buf is NULL.\n");
+        return;
+    }
+
+    /*
+     * Follow this structure:
+     */
+
+    typedef struct
+    {
+        void* buf;
+        size_t bufCapacity; //Allocated memory for buf
+        size_t elementSize; //Size in bytes of each element
+        size_t elementCount; //Number of stored elements
+    } dyarray;
+
+    fwrite(arr->buf, 1, arr->bufCapacity, file);
+    fwrite(&arr->bufCapacity, 1, sizeof(size_t), file);
+    fwrite(&arr->elementSize, 1, sizeof(size_t), file);
+    fwrite(&arr->elementCount, 1, sizeof(size_t), file);
 }
 
 #endif //Impl
