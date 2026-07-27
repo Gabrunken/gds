@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <stdio.h>
+
 struct SparseSet
 {
     void* data;
@@ -14,8 +16,6 @@ struct SparseSet
     size_t logicalToPhysicalArrLen;
     size_t* physicalToLogical;
 };
-
-typedef int FILE;
 
 //Data must be an element of size "valueSize"
 void SparseSetAddElement(struct SparseSet* set, size_t id, void* data);

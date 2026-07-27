@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include <stdio.h>
+
 typedef struct
 {
     void* buf;
@@ -10,8 +12,6 @@ typedef struct
     size_t elementSize; //Size in bytes of each element
     size_t elementCount; //Number of stored elements
 } dyarray;
-
-typedef int FILE;
 
 //Element size is the size in bytes of each element stored in the array (must be at least 1).
 //Initial element capacity indicates the initial per-element capacity allocated for the array (must be at least 1).
