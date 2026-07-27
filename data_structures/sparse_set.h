@@ -235,6 +235,21 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new)
     EXPECT(original, "SparseSetClone: original is NULL");
     EXPECT(new, "SparseSetClone: new is NULL");
 
+    if (!original->data || !original->logicalToPhysical || !original->physicalToLogical) {
+        printf("SparseSetClone ERROR: original buffer is not allocated.\n");
+        return false;
+    }
+
+    if (original->dataArrLen == 0 || original->logicalToPhysicalArrLen) {
+        printf("SparseSetClone ERROR: original buffer is empty.\n");
+        return false;
+    }
+
+    if (original->valueSize == 0) {
+        printf("SparseSetClone ERROR: original valueSize is 0.\n");
+        return false;
+    }
+
     new->data = malloc(original->dataArrLen);
     EXPECT(new->data, "SparseSetClone: calloc failed");
     memcpy(new->data, original->data, original->dataArrLen);
