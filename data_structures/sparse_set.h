@@ -38,6 +38,9 @@ bool SparseSetClone(struct SparseSet* original, struct SparseSet* new);
 //Serializes the passed sparseset in the specified file stream, by appending the data at the current cursor position.
 void SparseSetSerialize(struct SparseSet* set, FILE* file);
 
+//Deserialize a SparseSet stored in a file stream, into a destination SparseSet, the set must be freed after use.
+void SparseSetDeserialize(FILE* file, struct SparseSet* dest);
+
 #ifdef SPARSE_SET_IMPL
 
 #include <string.h>
@@ -321,6 +324,67 @@ void SparseSetSerialize(struct SparseSet* set, FILE* file)
     fwrite(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
     fwrite(set->physicalToLogical, 1, (set->dataArrLen / set->valueSize) * sizeof(size_t), file);
     fwrite(set->data, 1, set->dataArrLen, file);
+}
+
+void SparseSetDeserialize(FILE* file, struct SparseSet* dest)
+{
+    if (!dest) {
+        printf("SparseSetDeserialize ERROR: dest is NULL.\n");
+        return;
+    }
+
+    if (!file) {
+        printf("SparseSetSerialize ERROR: file is NULL.\n");
+        return;
+    }
+
+    struct SparseSet
+    {
+        size_t valueSize;
+        size_t dataLen;
+        size_t dataArrLen;
+        size_t logicalToPhysicalArrLen;
+        size_t* logicalToPhysical;
+        size_t* physicalToLogical;
+        void* data;
+    };
+
+    fread(&set->valueSize, 1, sizeof(size_t), file);
+    fread(&set->dataLen, 1, sizeof(size_t), file);
+    fread(&set->dataArrLen, 1, sizeof(size_t), file);
+    fread(&set->logicalToPhysicalArrLen, 1, sizeof(size_t), file);
+
+    set->logicalToPhysical = malloc(set->logicalToPhysicalArrLen);
+    if (!set->logicalToPhysical) {
+        printf("SparseSetDeserialize ERROR: malloc failed on logicalToPhysical.\n");
+        return;
+    }
+
+    set->physicalToLogical = malloc((set->dataArrLen / set->valueSize) * sizeof(size_t));
+    if (!set->physicalToLogical) {
+        printf("SparseSetDeserialize ERROR: malloc failed on physicalToLogical.\n");
+
+        free(set->logicalToPhysical);
+        set->logicalToPhysical = NULL;
+
+        return;
+    }
+
+    set->data = malloc(set->dataArrLen);
+    if (!set->data) {
+        printf("SparseSetDeserialize ERROR: malloc failed on data.\n");
+
+        free(set->logicalToPhysical);
+        set->logicalToPhysical = NULL;
+        free(set->physicalToLogical);
+        set->physicalToLogical = NULL;
+
+        return;
+    }
+
+    fread(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
+    fread(set->physicalToLogical, 1, (set->dataArrLen / set->valueSize) * sizeof(size_t), file);
+    fread(set->data, 1, set->dataArrLen, file);
 }
 
 #endif //SPARSE_SET_IMPL

@@ -40,6 +40,9 @@ bool DyArrayClone(dyarray* original, dyarray* new);
 //Serializes the passed dyarray in the specified file stream, by appending the data at the current cursor position.
 void DyArraySerialize(dyarray* arr, FILE* file);
 
+//Deserialize a dyarray stored in a file stream, into a destination array, the dyarray must be freed after use.
+void DyArrayDeserialize(FILE* file, dyarray* dest);
+
 #ifdef DYARRAY_IMPL
 
 #include <stdio.h>
@@ -202,6 +205,43 @@ void DyArraySerialize(dyarray* arr, FILE* file)
     fwrite(&arr->elementSize, 1, sizeof(size_t), file);
     fwrite(&arr->elementCount, 1, sizeof(size_t), file);
     fwrite(arr->buf, 1, arr->bufCapacity, file);
+}
+
+void DyArrayDeserialize(FILE* file, dyarray* dest)
+{
+    if (!dest) {
+        printf("DyArrayDeserialize ERROR: dest is NULL.\n");
+        return;
+    }
+
+    if (!file) {
+        printf("DyArrayDeserialize ERROR: file is NULL.\n");
+        return;
+    }
+
+    /*
+     * Follow this structure:
+     */
+
+    typedef struct
+    {
+        size_t bufCapacity; //Allocated memory for buf
+        size_t elementSize; //Size in bytes of each element
+        size_t elementCount; //Number of stored elements
+        void* buf;
+    } dyarray;
+
+    fread(&dest->bufCapacity, 1, sizeof(size_t), file);
+    fread(&dest->elementSize, 1, sizeof(size_t), file);
+    fread(&dest->elementCount, 1, sizeof(size_t), file);
+
+    dest->buf = malloc(dest->bufCapacity);
+    if (!dest->buf) {
+        printf("DyArrayDeserialize ERROR: malloc failed.\n");
+        return;
+    }
+
+    fread(dest->buf, 1, dest->bufCapacity, file);
 }
 
 #endif //Impl
