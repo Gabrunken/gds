@@ -334,7 +334,7 @@ void SparseSetDeserialize(FILE* file, struct SparseSet* dest)
     }
 
     if (!file) {
-        printf("SparseSetSerialize ERROR: file is NULL.\n");
+        printf("SparseSetDeserialize ERROR: file is NULL.\n");
         return;
     }
 
