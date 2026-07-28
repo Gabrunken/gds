@@ -349,42 +349,42 @@ void SparseSetDeserialize(FILE* file, struct SparseSet* dest)
         void* data;
     };
 
-    fread(&set->valueSize, 1, sizeof(size_t), file);
-    fread(&set->dataLen, 1, sizeof(size_t), file);
-    fread(&set->dataArrLen, 1, sizeof(size_t), file);
-    fread(&set->logicalToPhysicalArrLen, 1, sizeof(size_t), file);
+    fread(&dest->valueSize, 1, sizeof(size_t), file);
+    fread(&dest->dataLen, 1, sizeof(size_t), file);
+    fread(&dest->dataArrLen, 1, sizeof(size_t), file);
+    fread(&dest->logicalToPhysicalArrLen, 1, sizeof(size_t), file);
 
-    set->logicalToPhysical = malloc(set->logicalToPhysicalArrLen);
-    if (!set->logicalToPhysical) {
+    dest->logicalToPhysical = malloc(dest->logicalToPhysicalArrLen);
+    if (!dest->logicalToPhysical) {
         printf("SparseSetDeserialize ERROR: malloc failed on logicalToPhysical.\n");
         return;
     }
 
-    set->physicalToLogical = malloc((set->dataArrLen / set->valueSize) * sizeof(size_t));
-    if (!set->physicalToLogical) {
+    dest->physicalToLogical = malloc((dest->dataArrLen / dest->valueSize) * sizeof(size_t));
+    if (!dest->physicalToLogical) {
         printf("SparseSetDeserialize ERROR: malloc failed on physicalToLogical.\n");
 
-        free(set->logicalToPhysical);
-        set->logicalToPhysical = NULL;
+        free(dest->logicalToPhysical);
+        dest->logicalToPhysical = NULL;
 
         return;
     }
 
-    set->data = malloc(set->dataArrLen);
-    if (!set->data) {
+    dest->data = malloc(dest->dataArrLen);
+    if (!dest->data) {
         printf("SparseSetDeserialize ERROR: malloc failed on data.\n");
 
-        free(set->logicalToPhysical);
-        set->logicalToPhysical = NULL;
-        free(set->physicalToLogical);
-        set->physicalToLogical = NULL;
+        free(dest->logicalToPhysical);
+        dest->logicalToPhysical = NULL;
+        free(dest->physicalToLogical);
+        dest->physicalToLogical = NULL;
 
         return;
     }
 
-    fread(set->logicalToPhysical, 1, set->logicalToPhysicalArrLen, file);
-    fread(set->physicalToLogical, 1, (set->dataArrLen / set->valueSize) * sizeof(size_t), file);
-    fread(set->data, 1, set->dataArrLen, file);
+    fread(dest->logicalToPhysical, 1, dest->logicalToPhysicalArrLen, file);
+    fread(dest->physicalToLogical, 1, (dest->dataArrLen / dest->valueSize) * sizeof(size_t), file);
+    fread(dest->data, 1, dest->dataArrLen, file);
 }
 
 #endif //SPARSE_SET_IMPL
