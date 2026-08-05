@@ -35,6 +35,9 @@ void* SparseSetGetDataBuffer(struct SparseSet* set);
 
 bool SparseSetClone(struct SparseSet* original, struct SparseSet* new);
 
+//Clears the set data, but not freeing the buffer.
+void SparseSetClear(struct SparseSet* set);
+
 //Serializes the passed sparseset in the specified file stream, by appending the data at the current cursor position.
 void SparseSetSerialize(struct SparseSet* set, FILE* file);
 
@@ -385,6 +388,27 @@ void SparseSetDeserialize(FILE* file, struct SparseSet* dest)
     fread(dest->logicalToPhysical, 1, dest->logicalToPhysicalArrLen, file);
     fread(dest->physicalToLogical, 1, (dest->dataArrLen / dest->valueSize) * sizeof(size_t), file);
     fread(dest->data, 1, dest->dataArrLen, file);
+}
+
+void SparseSetClear(struct SparseSet* set)
+{
+    if (!set) {
+        printf("SparseSetClear ERROR: set is NULL.\n");
+        return;
+    }
+
+    if (!set->logicalToPhysical) {
+        printf("SparseSetClear ERROR: set->logicalToPhysical is NULL.\n");
+        return;
+    }
+
+    if (!set->physicalToLogical) {
+        printf("SparseSetClear ERROR: set->physicalToLogical is NULL.\n");
+        return;
+    }
+
+    set->dataLen = 0;
+    set->logicalToPhysicalArrLen = 0;
 }
 
 #endif //SPARSE_SET_IMPL

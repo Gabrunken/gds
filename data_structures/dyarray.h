@@ -37,6 +37,9 @@ bool DyArrayRemoveElementSP(dyarray* arr, size_t idx);
 
 bool DyArrayClone(dyarray* original, dyarray* new);
 
+//Clear its data but not freeing the buffer.
+void DyArrayClear(dyarray* arr);
+
 //Serializes the passed dyarray in the specified file stream, by appending the data at the current cursor position.
 void DyArraySerialize(dyarray* arr, FILE* file);
 
@@ -242,6 +245,21 @@ void DyArrayDeserialize(FILE* file, dyarray* dest)
     }
 
     fread(dest->buf, 1, dest->bufCapacity, file);
+}
+
+void DyArrayClear(dyarray* arr)
+{
+    if (!arr) {
+        printf("DyArrayClear ERROR: arr is NULL.\n");
+        return;
+    }
+
+    if (!arr->buf) {
+        printf("DyArrayClear ERROR: arr->buf is NULL.\n");
+        return;
+    }
+
+    arr->elementCount = 0;
 }
 
 #endif //Impl
