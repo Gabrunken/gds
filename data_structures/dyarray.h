@@ -35,6 +35,9 @@ bool DyArraySetElement(dyarray* arr, size_t idx, void* newVal);
 //Returns false on failure.
 bool DyArrayRemoveElementSP(dyarray* arr, size_t idx);
 
+//Removes an element from this array, worst case O(n) at start or middle, best case O(1) at end.
+bool DyArrayRemoveElement(dyarray* arr, size_t idx);
+
 bool DyArrayClone(dyarray* original, dyarray* new);
 
 //Clear its data but not freeing the buffer.
@@ -127,6 +130,30 @@ bool DyArrayRemoveElementSP(dyarray *arr, size_t idx)
         ((char*)arr->buf) + idx * arr->elementSize,
         ((char*)arr->buf) + arr->elementSize * (arr->elementCount - 1),
         arr->elementSize);
+
+    arr->elementCount--;
+    return true;
+}
+
+bool DyArrayRemoveElement(dyarray* arr, size_t idx)
+{
+    if (!arr) {printf("DyArrayRemoveElement ERROR: arr is NULL.\n"); return false;}
+    if (!arr->buf) {printf("DyArrayRemoveElement ERROR: arr.buf is NULL.\n"); return false;}
+    if (arr->elementSize == 0) {printf("DyArrayRemoveElement ERROR: arr.elementSize is 0.\n"); return false;}
+
+    //Check if idx is out of bounds
+    if (idx >= arr->elementCount) {printf("DyArrayRemoveElement ERROR: index is out of bounds\n"); return false;}
+
+    if (idx == arr->elementCount - 1) {
+        arr->elementCount--; //Last element
+        return true;
+    }
+
+    memcpy(
+        ((char*)arr-buf) + idx * arr->elementSize,
+        ((char*)arr-buf) + (idx + 1) * arr->elementSize,
+        (arr->elementCount - 1) * arr->elementSize
+    );
 
     arr->elementCount--;
     return true;
