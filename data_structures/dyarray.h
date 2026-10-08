@@ -19,6 +19,8 @@ typedef struct
 bool DyArrayCreate(dyarray* arr, size_t elementSize, size_t initialElementCapacity);
 void DyArrayFree(dyarray* arr);
 
+bool DyArrayCreateInitialized(dyarray* arr, size_t elementSize, size_t initialElementCapacity);
+
 //Copies the element for N bytes, where N is the singular element size.
 //Returns false on failure.
 bool DyArrayAddElement(dyarray* arr, void* element);
@@ -75,6 +77,22 @@ bool DyArrayCreate(dyarray* arr, size_t elementSize, size_t initialElementCapaci
     if (!initialElementCapacity) {printf("DyArrayCreate ERROR: initialElementCapacity is 0.\n"); return false;}
 
     arr->buf = malloc(elementSize * initialElementCapacity);
+    if (!arr->buf) {printf("DyArrayCreate ERROR: malloc failed.\n"); return false;}
+
+    arr->elementSize = elementSize;
+    arr->elementCount = 0;
+    arr->bufCapacity = initialElementCapacity * elementSize;
+
+    return true;
+}
+
+bool DyArrayCreateInitialized(dyarray* arr, size_t elementSize, size_t initialElementCapacity)
+{
+    if (!arr) {printf("DyArrayCreate ERROR: arr is NULL.\n"); return false;}
+    if (!elementSize) {printf("DyArrayCreate ERROR: elementSize is 0.\n"); return false;}
+    if (!initialElementCapacity) {printf("DyArrayCreate ERROR: initialElementCapacity is 0.\n"); return false;}
+
+    arr->buf = calloc(initialElementCapacity, elementSize);
     if (!arr->buf) {printf("DyArrayCreate ERROR: malloc failed.\n"); return false;}
 
     arr->elementSize = elementSize;
