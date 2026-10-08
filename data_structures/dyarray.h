@@ -150,8 +150,8 @@ bool DyArrayRemoveElement(dyarray* arr, size_t idx)
     }
 
     memcpy(
-        ((char*)arr-buf) + idx * arr->elementSize,
-        ((char*)arr-buf) + (idx + 1) * arr->elementSize,
+        ((char*)arr->buf) + idx * arr->elementSize,
+        ((char*)arr->buf) + (idx + 1) * arr->elementSize,
         (arr->elementCount - 1) * arr->elementSize
     );
 
